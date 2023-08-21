@@ -21,6 +21,16 @@ builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
+ void ConfigureServices(IServiceCollection services)
+{
+    services.AddAuthorization(options =>
+{
+    options.AddPolicy("Administrator", policy => policy.RequireRole("Administrator"));
+    options.AddPolicy("Usuario", policy => policy.RequireRole("Usuario"));
+    options.AddPolicy("Soporte", policy => policy.RequireRole("Soporte"));
+});
+}
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
