@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +11,7 @@ using VentasApp.Models;
 
 namespace VentasApp.Controllers
 {
+    [Authorize(Roles = "Usuario,Administrator,Soporte")]
     public class EventosController : Controller
     {
         private readonly VentasAppContext _context;
@@ -19,14 +22,16 @@ namespace VentasApp.Controllers
         }
 
         // GET: Eventos
+        [Authorize(Roles = "Usuario,Administrator,Soporte")]
         public async Task<IActionResult> Index()
         {
-              return _context.Eventos != null ? 
+            return _context.Eventos != null ? 
                           View(await _context.Eventos.ToListAsync()) :
                           Problem("Entity set 'VentasAppContext.Eventos'  is null.");
         }
 
         // GET: Eventos/Details/5
+        [Authorize(Roles = "Usuario,Administrator,Soporte")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.Eventos == null)
@@ -45,6 +50,7 @@ namespace VentasApp.Controllers
         }
 
         // GET: Eventos/Create
+        [Authorize(Roles = "Administrator,Soporte")]
         public IActionResult Create()
         {
             return View();
@@ -55,6 +61,7 @@ namespace VentasApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator,Soporte")]
         public async Task<IActionResult> Create([Bind("EventoId,NombreEvento,Descripcion,Ubicacion,Fecha")] Evento evento)
         {
             if (ModelState.IsValid)
@@ -67,6 +74,7 @@ namespace VentasApp.Controllers
         }
 
         // GET: Eventos/Edit/5
+        [Authorize(Roles = "Administrator,Soporte")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Eventos == null)
@@ -87,6 +95,7 @@ namespace VentasApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator,Soporte")]
         public async Task<IActionResult> Edit(int id, [Bind("EventoId,NombreEvento,Descripcion,Ubicacion,Fecha")] Evento evento)
         {
             if (id != evento.EventoId)
@@ -118,6 +127,7 @@ namespace VentasApp.Controllers
         }
 
         // GET: Eventos/Delete/5
+        [Authorize(Roles = "Administrator,Soporte")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Eventos == null)
@@ -138,6 +148,7 @@ namespace VentasApp.Controllers
         // POST: Eventos/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator,Soporte")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (_context.Eventos == null)
