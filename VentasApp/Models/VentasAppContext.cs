@@ -23,10 +23,10 @@ namespace VentasApp.Models
         public virtual DbSet<AspNetUserClaim> AspNetUserClaims { get; set; } = null!;
         public virtual DbSet<AspNetUserLogin> AspNetUserLogins { get; set; } = null!;
         public virtual DbSet<AspNetUserToken> AspNetUserTokens { get; set; } = null!;
-        public virtual DbSet<CategoriaEntradum> CategoriaEntrada { get; set; } = null!;
-        public virtual DbSet<Entradum> Entrada { get; set; } = null!;
+        public virtual DbSet<CategoriaEntrada> CategoriaEntrada { get; set; } = null!;
+        public virtual DbSet<Entrada> Entrada { get; set; } = null!;
         public virtual DbSet<Evento> Eventos { get; set; } = null!;
-        public virtual DbSet<EventoCategorium> EventoCategoria { get; set; } = null!;
+        public virtual DbSet<EventoCategoria> EventoCategoria { get; set; } = null!;
         public virtual DbSet<TarjetaCredito> TarjetaCreditos { get; set; } = null!;
      
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -121,12 +121,12 @@ namespace VentasApp.Models
                     .HasForeignKey(d => d.UserId);
             });
 
-            modelBuilder.Entity<CategoriaEntradum>(entity =>
+            modelBuilder.Entity<CategoriaEntrada>(entity =>
             {
                 entity.HasKey(e => e.CategoriaEntradaId);
             });
 
-            modelBuilder.Entity<Entradum>(entity =>
+            modelBuilder.Entity<Entrada>(entity =>
             {
                 entity.HasKey(e => e.EntradaId);
 
@@ -152,7 +152,7 @@ namespace VentasApp.Models
                 entity.Property(e => e.Fecha).HasColumnType("date");
             });
 
-            modelBuilder.Entity<EventoCategorium>(entity =>
+            modelBuilder.Entity<EventoCategoria>(entity =>
             {
                 entity.HasKey(e => e.EventoCategoriaId);
 

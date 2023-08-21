@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 namespace VentasApp.Models
 {
-    public partial class CategoriaEntradum
+    public partial class CategoriaEntrada
     {
-        public CategoriaEntradum()
+        public CategoriaEntrada()
         {
-            EventoCategoria = new HashSet<EventoCategorium>();
+            EventoCategoria = new HashSet<EventoCategoria>();
         }
 
         public int CategoriaEntradaId { get; set; }
@@ -15,6 +15,6 @@ namespace VentasApp.Models
         public double Precio { get; set; }
         public int Capacidad { get; set; }
 
-        public virtual ICollection<EventoCategorium> EventoCategoria { get; set; }
+        public virtual ICollection<EventoCategoria> EventoCategoria { get; set; }
     }
 }

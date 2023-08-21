@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace VentasApp.Models
 {
-    public partial class Entradum
+    public partial class Entrada
     {
         public int EntradaId { get; set; }
         public int EventoId { get; set; }

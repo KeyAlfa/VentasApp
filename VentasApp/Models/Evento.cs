@@ -7,8 +7,8 @@ namespace VentasApp.Models
     {
         public Evento()
         {
-            Entrada = new HashSet<Entradum>();
-            EventoCategoria = new HashSet<EventoCategorium>();
+            Entrada = new HashSet<Entrada>();
+            EventoCategoria = new HashSet<EventoCategoria>();
         }
 
         public int EventoId { get; set; }
@@ -17,7 +17,7 @@ namespace VentasApp.Models
         public string Ubicacion { get; set; } = null!;
         public DateTime Fecha { get; set; }
 
-        public virtual ICollection<Entradum> Entrada { get; set; }
-        public virtual ICollection<EventoCategorium> EventoCategoria { get; set; }
+        public virtual ICollection<Entrada> Entrada { get; set; }
+        public virtual ICollection<EventoCategoria> EventoCategoria { get; set; }
     }
 }

@@ -10,7 +10,7 @@ namespace VentasApp.Models
             AspNetUserClaims = new HashSet<AspNetUserClaim>();
             AspNetUserLogins = new HashSet<AspNetUserLogin>();
             AspNetUserTokens = new HashSet<AspNetUserToken>();
-            Entrada = new HashSet<Entradum>();
+            Entrada = new HashSet<Entrada>();
             TarjetaCreditos = new HashSet<TarjetaCredito>();
             Roles = new HashSet<AspNetRole>();
         }
@@ -34,7 +34,7 @@ namespace VentasApp.Models
         public virtual ICollection<AspNetUserClaim> AspNetUserClaims { get; set; }
         public virtual ICollection<AspNetUserLogin> AspNetUserLogins { get; set; }
         public virtual ICollection<AspNetUserToken> AspNetUserTokens { get; set; }
-        public virtual ICollection<Entradum> Entrada { get; set; }
+        public virtual ICollection<Entrada> Entrada { get; set; }
         public virtual ICollection<TarjetaCredito> TarjetaCreditos { get; set; }
 
         public virtual ICollection<AspNetRole> Roles { get; set; }
