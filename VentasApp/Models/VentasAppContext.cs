@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace VentasApp.Models
 {
-    public partial class VentasAppContext : IdentityDbContext
+    public partial class VentasAppContext : DbContext
     {
         public VentasAppContext()
         {
@@ -31,7 +31,7 @@ namespace VentasApp.Models
      
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
+           
             modelBuilder.Entity<AspNetRole>(entity =>
             {
                 entity.HasIndex(e => e.NormalizedName, "RoleNameIndex")
