@@ -11,7 +11,7 @@ using VentasApp.Models;
 
 namespace VentasApp.Controllers
 {
-    [Authorize(Roles = "Administrator,Soporte")]
+    [Authorize(Policy = "Administrator,Soporte")]
     public class EventoCategoriasController : Controller
     {
         private readonly VentasAppContext _context;

@@ -10,7 +10,7 @@ using VentasApp.Models;
 
 namespace VentasApp.Controllers
 {
-    [Authorize(Roles = "Administrator")]
+    [Authorize(Policy = "Administrator")]
     public class CategoriaEntradasController : Controller
     {
         private readonly VentasAppContext _context;

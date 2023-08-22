@@ -16,6 +16,7 @@ builder.Services.AddDbContext<VentasAppContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.")));
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 
@@ -48,3 +49,14 @@ app.MapControllerRoute(
 app.MapRazorPages();
 
     app.Run();
+
+
+void PoliticasAuthenticacion(IServiceCollection services) 
+{ 
+    services.AddAuthorization(options =>
+    {
+        options.AddPolicy("Usuario", policy => policy.RequireClaim("Usuario")); 
+        options.AddPolicy("Administrator", policy => policy.RequireClaim("Administrator")); 
+        options.AddPolicy("Soporte", policy => policy.RequireClaim("Soporte")); 
+    });
+}
