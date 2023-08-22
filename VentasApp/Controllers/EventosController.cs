@@ -11,7 +11,7 @@ using VentasApp.Models;
 
 namespace VentasApp.Controllers
 {
-    [Authorize(Policy = "Usuario,Administrator,Soporte")]
+    [Authorize(Roles = "Usuario,Administrator,Soporte")]
     public class EventosController : Controller
     {
         private readonly VentasAppContext _context;
@@ -22,7 +22,7 @@ namespace VentasApp.Controllers
         }
 
         // GET: Eventos
-        [Authorize(Policy = "Usuario,Administrator,Soporte")]
+        [Authorize(Roles = "Usuario,Administrator,Soporte")]
         public async Task<IActionResult> Index()
         {
             return _context.Eventos != null ? 
@@ -31,7 +31,7 @@ namespace VentasApp.Controllers
         }
 
         // GET: Eventos/Details/5
-        [Authorize(Policy = "Usuario,Administrator,Soporte")]
+        [Authorize(Roles = "Usuario,Administrator,Soporte")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.Eventos == null)
@@ -50,7 +50,7 @@ namespace VentasApp.Controllers
         }
 
         // GET: Eventos/Create
-        [Authorize(Policy = "Administrator,Soporte")]
+        [Authorize(Roles = "Administrator,Soporte")]
         public IActionResult Create()
         {
             return View();
@@ -61,7 +61,7 @@ namespace VentasApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Policy = "Administrator,Soporte")]
+        [Authorize(Roles = "Administrator,Soporte")]
         public async Task<IActionResult> Create([Bind("EventoId,NombreEvento,Descripcion,Ubicacion,Fecha")] Evento evento)
         {
             if (ModelState.IsValid)
@@ -74,7 +74,7 @@ namespace VentasApp.Controllers
         }
 
         // GET: Eventos/Edit/5
-        [Authorize(Policy = "Administrator,Soporte")]
+        [Authorize(Roles = "Administrator,Soporte")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Eventos == null)
@@ -95,7 +95,7 @@ namespace VentasApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Policy = "Administrator,Soporte")]
+        [Authorize(Roles = "Administrator,Soporte")]
         public async Task<IActionResult> Edit(int id, [Bind("EventoId,NombreEvento,Descripcion,Ubicacion,Fecha")] Evento evento)
         {
             if (id != evento.EventoId)
@@ -127,7 +127,7 @@ namespace VentasApp.Controllers
         }
 
         // GET: Eventos/Delete/5
-        [Authorize(Policy = "Administrator,Soporte")]
+        [Authorize(Roles = "Administrator,Soporte")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Eventos == null)
@@ -148,7 +148,7 @@ namespace VentasApp.Controllers
         // POST: Eventos/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [Authorize(Policy = "Administrator,Soporte")]
+        [Authorize(Roles = "Administrator,Soporte")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (_context.Eventos == null)

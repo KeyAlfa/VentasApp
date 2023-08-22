@@ -51,12 +51,4 @@ app.MapRazorPages();
     app.Run();
 
 
-void PoliticasAuthenticacion(IServiceCollection services) 
-{ 
-    services.AddAuthorization(options =>
-    {
-        options.AddPolicy("Usuario", policy => policy.RequireClaim("Usuario")); 
-        options.AddPolicy("Administrator", policy => policy.RequireClaim("Administrator")); 
-        options.AddPolicy("Soporte", policy => policy.RequireClaim("Soporte")); 
-    });
-}
+
