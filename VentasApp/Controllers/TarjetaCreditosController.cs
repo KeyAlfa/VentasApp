@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +11,7 @@ using VentasApp.Models;
 
 namespace VentasApp.Controllers
 {
+    [Authorize]
     public class TarjetaCreditosController : Controller
     {
         private readonly VentasAppContext _context;
@@ -21,7 +24,17 @@ namespace VentasApp.Controllers
         // GET: TarjetaCreditos
         public async Task<IActionResult> Index()
         {
-            var ventasAppContext = _context.TarjetaCreditos.Include(t => t.Usuario);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            // Verifica si el usuario tiene el rol de "Administrator"
+            var isAdmin = User.IsInRole("Administrator");
+
+            // Filtra las entradas en función del ID del usuario si no es administrador
+            var ventasAppContext = _context.TarjetaCreditos
+                .Where(e => isAdmin || e.UsuarioId == userId)
+                .Include(t => t.Usuario);
+
+            // Devuelve la lista filtrada de entradas a la vista
             return View(await ventasAppContext.ToListAsync());
         }
 
@@ -47,7 +60,16 @@ namespace VentasApp.Controllers
         // GET: TarjetaCreditos/Create
         public IActionResult Create()
         {
-            ViewData["UsuarioId"] = new SelectList(_context.AspNetUsers, "Id", "Id");
+            if (User.IsInRole("Administrator"))
+            {
+                ViewData["UsuarioId"] = new SelectList(_context.AspNetUsers, "Id", "UserName");
+            }
+            else
+            {
+                var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                ViewData["UsuarioId"] = new SelectList(_context.AspNetUsers.Where(u => u.Id == currentUserId), "Id", "UserName");
+            }
+
             return View();
         }
 
@@ -58,17 +80,35 @@ namespace VentasApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("TarjetaCreditoId,UsuarioId,Saldo")] TarjetaCredito tarjetaCredito)
         {
-            if (ModelState.IsValid)
+            try
             {
                 _context.Add(tarjetaCredito);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UsuarioId"] = new SelectList(_context.AspNetUsers, "Id", "Id", tarjetaCredito.UsuarioId);
+            catch (Exception)
+            {
+
+                throw;
+            }
+                          
+            ViewData["UsuarioId"] = new SelectList(_context.AspNetUsers, "Id", "UserName", tarjetaCredito.UsuarioId);
+            // Check if the user has the "Admin" role
+            if (User.IsInRole("Administrator"))
+            {
+                ViewData["UsuarioId"] = new SelectList(_context.AspNetUsers, "Id", "UserName");
+            }
+            else
+            {
+                var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                ViewData["UsuarioId"] = new SelectList(_context.AspNetUsers.Where(u => u.Id == currentUserId), "Id", "UserName");
+                tarjetaCredito.UsuarioId = currentUserId; // Set the UsuarioId to the current user's ID
+            }
             return View(tarjetaCredito);
         }
 
         // GET: TarjetaCreditos/Edit/5
+        [Authorize(Roles = "Administrator,Soporte")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.TarjetaCreditos == null)
@@ -81,13 +121,14 @@ namespace VentasApp.Controllers
             {
                 return NotFound();
             }
-            ViewData["UsuarioId"] = new SelectList(_context.AspNetUsers, "Id", "Id", tarjetaCredito.UsuarioId);
+            ViewData["UsuarioId"] = new SelectList(_context.AspNetUsers, "Id", "UserName", tarjetaCredito.UsuarioId);
             return View(tarjetaCredito);
         }
 
         // POST: TarjetaCreditos/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Administrator,Soporte")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("TarjetaCreditoId,UsuarioId,Saldo")] TarjetaCredito tarjetaCredito)
@@ -95,10 +136,7 @@ namespace VentasApp.Controllers
             if (id != tarjetaCredito.TarjetaCreditoId)
             {
                 return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
+            }          
                 try
                 {
                     _context.Update(tarjetaCredito);
@@ -116,7 +154,7 @@ namespace VentasApp.Controllers
                     }
                 }
                 return RedirectToAction(nameof(Index));
-            }
+            
             ViewData["UsuarioId"] = new SelectList(_context.AspNetUsers, "Id", "Id", tarjetaCredito.UsuarioId);
             return View(tarjetaCredito);
         }
