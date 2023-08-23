@@ -38,5 +38,5 @@ namespace VentasApp.Controllers
             }
             return RedirectToAction("Index");
         }
-    }
+}
 }
