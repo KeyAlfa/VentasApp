@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +11,7 @@ using VentasApp.Models;
 
 namespace VentasApp.Controllers
 {
+    [Authorize]
     public class EntradasController : Controller
     {
         private readonly VentasAppContext _context;
@@ -21,7 +24,18 @@ namespace VentasApp.Controllers
         // GET: Entradas
         public async Task<IActionResult> Index()
         {
-            var ventasAppContext = _context.Entrada.Include(e => e.Evento).Include(e => e.Usuario);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            // Verifica si el usuario tiene el rol de "Administrator"
+            var isAdmin = User.IsInRole("Administrator");
+
+            // Filtra las entradas en función del ID del usuario si no es administrador
+            var ventasAppContext = _context.Entrada
+                .Where(e => isAdmin || e.UsuarioId == userId)
+                .Include(e => e.Evento)
+                .Include(e => e.Usuario);
+
+            // Devuelve la lista filtrada de entradas a la vista
             return View(await ventasAppContext.ToListAsync());
         }
 
@@ -49,13 +63,22 @@ namespace VentasApp.Controllers
         public IActionResult Create()
         {
             ViewData["EventoId"] = new SelectList(_context.Eventos, "EventoId", "NombreEvento");
-            ViewData["UsuarioId"] = new SelectList(_context.AspNetUsers, "Id", "UserName");
+
+            // Check if the user has the "Admin" role
+            if (User.IsInRole("Administrator"))
+            {
+                ViewData["UsuarioId"] = new SelectList(_context.AspNetUsers, "Id", "UserName");
+            }
+            else
+            {
+                var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                ViewData["UsuarioId"] = new SelectList(_context.AspNetUsers.Where(u => u.Id == currentUserId), "Id", "UserName");
+            }
+
             return View();
         }
 
         // POST: Entradas/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("EntradaId,EventoId,UsuarioId")] Entrada entrada)
@@ -68,15 +91,28 @@ namespace VentasApp.Controllers
             }
             catch (Exception)
             {
-
                 throw;
-            }                      
+            }
+
             ViewData["EventoId"] = new SelectList(_context.Eventos, "EventoId", "EventoId", entrada.EventoId);
-            ViewData["UsuarioId"] = new SelectList(_context.AspNetUsers, "Id", "Id", entrada.UsuarioId);
+
+            // Check if the user has the "Admin" role
+            if (User.IsInRole("Administrator"))
+            {
+                ViewData["UsuarioId"] = new SelectList(_context.AspNetUsers, "Id", "UserName");
+            }
+            else
+            {
+                var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                ViewData["UsuarioId"] = new SelectList(_context.AspNetUsers.Where(u => u.Id == currentUserId), "Id", "UserName");
+                entrada.UsuarioId = currentUserId; // Set the UsuarioId to the current user's ID
+            }
+
             return View(entrada);
         }
 
         // GET: Entradas/Edit/5
+        [Authorize(Roles = "Administrator,Soporte")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Entrada == null)
@@ -97,6 +133,7 @@ namespace VentasApp.Controllers
         // POST: Entradas/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Administrator,Soporte")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("EntradaId,EventoId,UsuarioId")] Entrada entrada)
