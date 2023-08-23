@@ -7,7 +7,7 @@
 <h2>Categoria de Eventos</h2>
 
 <p>
-    <a asp-action="Create">Create nueva categoria de evento</a>
+    <a asp-action="Create">Crear nueva categoria de evento</a>
 </p>
 <table class="table">
     <thead>
@@ -25,10 +25,10 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.CategoriaEntrada.CategoriaEntradaId)
+                @Html.DisplayFor(modelItem => item.CategoriaEntrada.Nombre)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Evento.EventoId)
+                @Html.DisplayFor(modelItem => item.Evento.NombreEvento)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.EventoCategoriaId">Editar</a> |

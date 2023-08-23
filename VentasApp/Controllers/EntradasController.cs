@@ -48,8 +48,8 @@ namespace VentasApp.Controllers
         // GET: Entradas/Create
         public IActionResult Create()
         {
-            ViewData["EventoId"] = new SelectList(_context.Eventos, "EventoId", "EventoId");
-            ViewData["UsuarioId"] = new SelectList(_context.AspNetUsers, "Id", "Id");
+            ViewData["EventoId"] = new SelectList(_context.Eventos, "EventoId", "NombreEvento");
+            ViewData["UsuarioId"] = new SelectList(_context.AspNetUsers, "Id", "UserName");
             return View();
         }
 
@@ -60,12 +60,17 @@ namespace VentasApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("EntradaId,EventoId,UsuarioId")] Entrada entrada)
         {
-            if (ModelState.IsValid)
+            try
             {
                 _context.Add(entrada);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            catch (Exception)
+            {
+
+                throw;
+            }                      
             ViewData["EventoId"] = new SelectList(_context.Eventos, "EventoId", "EventoId", entrada.EventoId);
             ViewData["UsuarioId"] = new SelectList(_context.AspNetUsers, "Id", "Id", entrada.UsuarioId);
             return View(entrada);
@@ -84,8 +89,8 @@ namespace VentasApp.Controllers
             {
                 return NotFound();
             }
-            ViewData["EventoId"] = new SelectList(_context.Eventos, "EventoId", "EventoId", entrada.EventoId);
-            ViewData["UsuarioId"] = new SelectList(_context.AspNetUsers, "Id", "Id", entrada.UsuarioId);
+            ViewData["EventoId"] = new SelectList(_context.Eventos, "EventoId", "NombreEvento", entrada.EventoId);
+            ViewData["UsuarioId"] = new SelectList(_context.AspNetUsers, "Id", "UserName", entrada.UsuarioId);
             return View(entrada);
         }
 
@@ -99,10 +104,7 @@ namespace VentasApp.Controllers
             if (id != entrada.EntradaId)
             {
                 return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
+            }         
                 try
                 {
                     _context.Update(entrada);
@@ -120,7 +122,7 @@ namespace VentasApp.Controllers
                     }
                 }
                 return RedirectToAction(nameof(Index));
-            }
+            
             ViewData["EventoId"] = new SelectList(_context.Eventos, "EventoId", "EventoId", entrada.EventoId);
             ViewData["UsuarioId"] = new SelectList(_context.AspNetUsers, "Id", "Id", entrada.UsuarioId);
             return View(entrada);
@@ -160,14 +162,14 @@ namespace VentasApp.Controllers
             {
                 _context.Entrada.Remove(entrada);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool EntradaExists(int id)
         {
-          return (_context.Entrada?.Any(e => e.EntradaId == id)).GetValueOrDefault();
+            return (_context.Entrada?.Any(e => e.EntradaId == id)).GetValueOrDefault();
         }
     }
 }

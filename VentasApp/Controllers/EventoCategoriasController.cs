@@ -51,8 +51,8 @@ namespace VentasApp.Controllers
         // GET: EventoCategorias/Create
         public IActionResult Create()
         {
-            ViewData["CategoriaEntradaId"] = new SelectList(_context.CategoriaEntrada, "CategoriaEntradaId", "CategoriaEntradaId");
-            ViewData["EventoId"] = new SelectList(_context.Eventos, "EventoId", "EventoId");
+            ViewData["CategoriaEntradaId"] = new SelectList(_context.CategoriaEntrada, "CategoriaEntradaId", "Nombre");
+            ViewData["EventoId"] = new SelectList(_context.Eventos, "EventoId", "NombreEvento");
             return View();
         }
 
@@ -63,14 +63,21 @@ namespace VentasApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("EventoCategoriaId,CategoriaEntradaId,EventoId")] EventoCategoria eventoCategoria)
         {
-            if (ModelState.IsValid)
+            try
             {
                 _context.Add(eventoCategoria);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoriaEntradaId"] = new SelectList(_context.CategoriaEntrada, "CategoriaEntradaId", "CategoriaEntradaId", eventoCategoria.CategoriaEntradaId);
-            ViewData["EventoId"] = new SelectList(_context.Eventos, "EventoId", "EventoId", eventoCategoria.EventoId);
+            catch (Exception)
+            {
+
+                throw;
+            }
+               
+            
+            ViewData["CategoriaEntradaId"] = new SelectList(_context.CategoriaEntrada, "CategoriaEntradaId", "Nombre", eventoCategoria.CategoriaEntradaId);
+            ViewData["EventoId"] = new SelectList(_context.Eventos, "EventoId", "NombreEvento", eventoCategoria.EventoId);
             return View(eventoCategoria);
         }
 
@@ -87,8 +94,8 @@ namespace VentasApp.Controllers
             {
                 return NotFound();
             }
-            ViewData["CategoriaEntradaId"] = new SelectList(_context.CategoriaEntrada, "CategoriaEntradaId", "CategoriaEntradaId", eventoCategoria.CategoriaEntradaId);
-            ViewData["EventoId"] = new SelectList(_context.Eventos, "EventoId", "EventoId", eventoCategoria.EventoId);
+            ViewData["CategoriaEntradaId"] = new SelectList(_context.CategoriaEntrada, "CategoriaEntradaId", "Nombre", eventoCategoria.CategoriaEntradaId);
+            ViewData["EventoId"] = new SelectList(_context.Eventos, "EventoId", "NombreEvento", eventoCategoria.EventoId);
             return View(eventoCategoria);
         }
 
@@ -103,9 +110,7 @@ namespace VentasApp.Controllers
             {
                 return NotFound();
             }
-
-            if (ModelState.IsValid)
-            {
+         
                 try
                 {
                     _context.Update(eventoCategoria);
@@ -123,9 +128,9 @@ namespace VentasApp.Controllers
                     }
                 }
                 return RedirectToAction(nameof(Index));
-            }
-            ViewData["CategoriaEntradaId"] = new SelectList(_context.CategoriaEntrada, "CategoriaEntradaId", "CategoriaEntradaId", eventoCategoria.CategoriaEntradaId);
-            ViewData["EventoId"] = new SelectList(_context.Eventos, "EventoId", "EventoId", eventoCategoria.EventoId);
+            
+            ViewData["CategoriaEntradaId"] = new SelectList(_context.CategoriaEntrada, "CategoriaEntradaId", "Nombre", eventoCategoria.CategoriaEntradaId);
+            ViewData["EventoId"] = new SelectList(_context.Eventos, "EventoId", "NombreEvento", eventoCategoria.EventoId);
             return View(eventoCategoria);
         }
 
@@ -163,14 +168,14 @@ namespace VentasApp.Controllers
             {
                 _context.EventoCategoria.Remove(eventoCategoria);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool EventoCategoriaExists(int id)
         {
-          return (_context.EventoCategoria?.Any(e => e.EventoCategoriaId == id)).GetValueOrDefault();
+            return (_context.EventoCategoria?.Any(e => e.EventoCategoriaId == id)).GetValueOrDefault();
         }
     }
 }

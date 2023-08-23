@@ -143,12 +143,13 @@ namespace VentasApp.Controllers
             }
 
             return View(evento);
+
         }
 
         // POST: Eventos/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
         [Authorize(Roles = "Administrator,Soporte")]
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]      
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (_context.Eventos == null)
@@ -160,7 +161,7 @@ namespace VentasApp.Controllers
             {
                 _context.Eventos.Remove(evento);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
